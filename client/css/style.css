@@ -281,7 +281,7 @@ main {
 .featured-card p {
     color: var(--text-secondary);
     font-size: 1.1rem;
-    max-width: 600px;
+    max-width: 100%;
     font-family: var(--font-sans);
 }
 
@@ -466,7 +466,195 @@ main {
     margin-bottom: 1.5rem;
     color: #d4d4d8;
     /* Zinc 300 */
+    line-height: 1.8;
 }
+
+/* Markdown 渲染后的元素样式 */
+.article-content h3 {
+    font-size: 1.4rem;
+    margin: 2.5rem 0 1.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.article-content h3::before {
+    content: "###";
+    color: var(--accent-purple);
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 1rem;
+    margin-right: 0.75rem;
+}
+
+.article-content h4 {
+    font-size: 1.2rem;
+    margin: 2rem 0 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* 代码块 - 行内代码 */
+.article-content code {
+    background: var(--bg-surface);
+    color: var(--accent-green);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    border: 1px solid var(--border-subtle);
+}
+
+/* 代码块 - 代码区块 */
+.article-content pre {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+
+.article-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+/* 引用块 */
+.article-content blockquote {
+    border-left: 3px solid var(--accent-purple);
+    margin: 1.5rem 0;
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    background: rgba(192, 132, 252, 0.05);
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.article-content blockquote p {
+    margin-bottom: 0.75rem;
+}
+
+.article-content blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* 列表 */
+.article-content ul,
+.article-content ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+    color: #d4d4d8;
+}
+
+.article-content li {
+    margin-bottom: 0.75rem;
+    line-height: 1.8;
+}
+
+.article-content li::marker {
+    color: var(--accent-purple);
+}
+
+/* 链接 */
+.article-content a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+    transition: all 0.2s ease;
+}
+
+.article-content a:hover {
+    color: #93c5fd;
+    border-bottom-color: var(--accent-blue);
+}
+
+/* 表格 */
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.article-content thead {
+    background: var(--bg-surface);
+}
+
+.article-content th {
+    padding: 1rem;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.article-content td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: #d4d4d8;
+}
+
+.article-content tr:last-child td {
+    border-bottom: none;
+}
+
+.article-content tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* 水平分割线 */
+.article-content hr {
+    border: none;
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 3rem 0;
+}
+
+/* 图片 */
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-subtle);
+}
+
+/* 首页摘要中的 Markdown 样式（简化版） */
+.featured-card p code,
+.article-card p code {
+    background: rgba(74, 222, 128, 0.1);
+    color: var(--accent-green);
+    padding: 0.15em 0.3em;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+.featured-card p strong,
+.article-card p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.featured-card p em,
+.article-card p em {
+    font-style: italic;
+}
+
+.featured-card p a,
+.article-card p a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(96, 165, 250, 0.3);
+}
+
 
 /* Footer */
 footer {

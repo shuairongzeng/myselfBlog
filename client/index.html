@@ -7,6 +7,8 @@
     <meta name="description" content="Antigravity Blog - Build the new way">
     <title>Antigravity Blog</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 </head>
 
 <body>
@@ -81,6 +83,16 @@
             const featuredContainer = document.getElementById('featured-container');
             const articlesContainer = document.getElementById('articles-container');
 
+            // Configure marked for Markdown parsing
+            if (typeof marked !== 'undefined') {
+                marked.setOptions({
+                    breaks: true,
+                    gfm: true,
+                    headerIds: false,  // 摘要不需要标题 ID
+                    mangle: false
+                });
+            }
+
             // 分离推荐文章和普通文章
             const featured = articles.filter(a => a.featured === 1);
             const regular = articles.filter(a => a.featured !== 1);
@@ -88,6 +100,13 @@
             // 推荐区只显示最新1篇推荐文章
             if (featured.length > 0) {
                 const topFeatured = featured[0];
+                let summary = topFeatured.summary || 'No summary available.';
+
+                // Parse Markdown for summary
+                if (typeof marked !== 'undefined') {
+                    summary = marked.parse(summary);
+                }
+
                 featuredContainer.innerHTML = `
                     <div class="section-title">Featured_Build</div>
                     <a href="article.html?id=${topFeatured.id}" class="featured-card">
@@ -97,7 +116,7 @@
                                 <span>:: ${formatDate(topFeatured.created_at)}</span>
                             </div>
                             <h2>${topFeatured.title}</h2>
-                            <p>${topFeatured.summary || 'No summary available.'}</p>
+                            <p>${summary}</p>
                         </div>
                     </a>
                 `;
@@ -110,11 +129,19 @@
             const allRegular = [...remainingFeatured, ...regular];
 
             if (allRegular.length > 0) {
-                articlesContainer.innerHTML = allRegular.map((article, index) => `
+                articlesContainer.innerHTML = allRegular.map((article, index) => {
+                    let summary = article.summary || '...';
+
+                    // Parse Markdown for summary
+                    if (typeof marked !== 'undefined') {
+                        summary = marked.parse(summary);
+                    }
+
+                    return `
                     <a href="article.html?id=${article.id}" class="article-card" style="animation-delay: ${index * 0.1}s">
                         <div class="article-body">
                             <h3>${article.title}</h3>
-                            <p>${article.summary || '...'}</p>
+                            <p>${summary}</p>
                         </div>
                         <div class="article-meta">
                             <span>UID: ${article.id.toString().padStart(4, '0')}</span>
@@ -122,7 +149,7 @@
                             ${article.featured === 1 ? '<span class="badge" style="margin-left: auto;">★</span>' : ''}
                         </div>
                     </a>
-                `).join('');
+                `}).join('');
             } else if (featured.length === 0) {
                 articlesContainer.innerHTML = `
                     <div style="font-family: var(--font-mono); color: var(--text-secondary);">

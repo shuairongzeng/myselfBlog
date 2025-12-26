@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article Reader | Antigravity</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 </head>
 
 <body>
@@ -63,7 +64,14 @@
                     const article = result.data;
                     let content = article.content || '';
 
+                    // Configure and parse Markdown
                     if (typeof marked !== 'undefined') {
+                        marked.setOptions({
+                            breaks: true,        // 支持换行
+                            gfm: true,          // 启用 GitHub Flavored Markdown
+                            headerIds: true,    // 为标题生成 ID
+                            mangle: false       // 不混淆邮箱地址
+                        });
                         content = marked.parse(content);
                     }
 
