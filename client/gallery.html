@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Antigravity Gallery">
+    <title>Gallery | Antigravity</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                Antigravity::Blog
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Articles</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="section-title">
+            <span>Visual_Assets</span>
+            <span style="margin-left: auto; font-family: var(--font-mono); font-size: 0.8rem;">[FILTER::READY]</span>
+        </div>
+
+        <!-- Filter Controls -->
+        <div id="filters-container"
+            style="margin-bottom: 2rem; display: flex; gap: 1rem; font-family: var(--font-mono);">
+            <button class="btn btn-primary" data-group="全部">ALL</button>
+        </div>
+
+        <!-- Grid -->
+        <div class="gallery-grid" id="gallery-container">
+            <div class="loading-state">// Rendering assets...</div>
+        </div>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="modal" id="lightbox" style="display: none; align-items: center; justify-content: center;">
+        <span class="lightbox-close"
+            style="position: absolute; top: 2rem; right: 2rem; color: #fff; cursor: pointer; font-size: 2rem;">&times;</span>
+        <div class="lightbox-content"
+            style="background: transparent; border: none; box-shadow: none; text-align: center;">
+            <img src="" alt="Preview"
+                style="max-height: 80vh; max-width: 90vw; border: 1px solid var(--border-subtle); border-radius: 4px;">
+            <div class="caption" style="margin-top: 1rem; font-family: var(--font-mono); color: var(--text-secondary);">
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Antigravity Blog. Visual systems active.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentGroup = '全部';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGroups();
+            loadGallery();
+            initLightbox();
+        });
+
+        async function loadGroups() {
+            try {
+                const response = await fetch('/api/gallery/groups');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    const container = document.getElementById('filters-container');
+                    const groups = ['全部', ...result.data];
+
+                    container.innerHTML = groups.map(group => `
+                        <button class="btn ${group === currentGroup ? 'btn-primary' : ''}" 
+                                data-group="${group}"
+                                onclick="setGroup('${group}')">
+                            ${group.toUpperCase()}
+                        </button>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Group Load Error:', error);
+            }
+        }
+
+        window.setGroup = function (group) {
+            currentGroup = group;
+            // Update active state
+            document.querySelectorAll('#filters-container .btn').forEach(btn => {
+                if (btn.dataset.group === group) {
+                    btn.classList.add('btn-primary');
+                } else {
+                    btn.classList.remove('btn-primary');
+                }
+            });
+            loadGallery();
+        }
+
+        async function loadGallery() {
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '<div style="font-family: var(--font-mono); color: var(--text-tertiary);">// Fetching data...</div>';
+
+            try {
+                const url = currentGroup === '全部'
+                    ? '/api/gallery'
+                    : `/api/gallery?group=${encodeURIComponent(currentGroup)}`;
+
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    container.innerHTML = result.data.map(image => `
+                        <div class="gallery-item" onclick="openLightbox('${image.path}', '${image.title || ''}')" style="cursor: pointer;">
+                            <img src="${image.path}" alt="${image.title}" style="width: 100%; display: block;" loading="lazy">
+                            <div style="padding: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); border-top: 1px solid var(--border-subtle);">
+                                ${image.title || 'Untitled_Asset'}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div style="font-family: var(--font-mono);">[EMPTY_BUFFER]</div>';
+                }
+            } catch (error) {
+                console.error('Gallery Error:', error);
+                container.innerHTML = '<div style="color: #ef4444;">ERR::LOAD_FAILED</div>';
+            }
+        }
+
+        function initLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            const closeBtn = document.querySelector('.lightbox-close');
+
+            closeBtn.onclick = () => {
+                lightbox.style.display = 'none';
+            };
+
+            lightbox.onclick = (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                }
+            };
+        }
+
+        window.openLightbox = function (src, title) {
+            const lightbox = document.getElementById('lightbox');
+            const img = lightbox.querySelector('img');
+            const caption = lightbox.querySelector('.caption');
+
+            img.src = src;
+            caption.textContent = title;
+            lightbox.style.display = 'flex';
+        }
+    </script>
+</body>
+
+</html>

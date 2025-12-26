@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Antigravity Resources">
+    <title>Resources | Antigravity</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                Antigravity::Blog
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Articles</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="resources.html" class="active">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="section-title">
+            <span>Binary_Repository</span>
+        </div>
+
+        <!-- Filter Controls -->
+        <div id="filters-container"
+            style="margin-bottom: 2rem; display: flex; gap: 1rem; font-family: var(--font-mono);">
+            <button class="btn btn-primary" data-category="全部">ROOT</button>
+        </div>
+
+        <!-- Resource List -->
+        <div class="resource-list" id="resources-container">
+            <div class="loading-state">// Accessing file system...</div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Antigravity Blog. Repository synced.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentCategory = '全部';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadResources();
+        });
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/resources/categories');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    const container = document.getElementById('filters-container');
+                    const categories = ['全部', ...result.data];
+
+                    container.innerHTML = categories.map(cat => `
+                        <button class="btn ${cat === currentCategory ? 'btn-primary' : ''}" 
+                                data-category="${cat}"
+                                onclick="setCategory('${cat}')">
+                            ${cat === '全部' ? 'ROOT' : cat.toUpperCase()}
+                        </button>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Category Error:', error);
+            }
+        }
+
+        window.setCategory = function (cat) {
+            currentCategory = cat;
+            document.querySelectorAll('#filters-container .btn').forEach(btn => {
+                if (btn.dataset.category === cat) {
+                    btn.classList.add('btn-primary');
+                } else {
+                    btn.classList.remove('btn-primary');
+                }
+            });
+            loadResources();
+        }
+
+        async function loadResources() {
+            const container = document.getElementById('resources-container');
+            container.innerHTML = '<div style="font-family: var(--font-mono); color: var(--text-tertiary);">// Scanning...</div>';
+
+            try {
+                const url = currentCategory === '全部'
+                    ? '/api/resources'
+                    : `/api/resources?category=${encodeURIComponent(currentCategory)}`;
+
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    container.innerHTML = result.data.map(resource => `
+                        <div class="resource-item">
+                            <div class="resource-icon" style="font-family: var(--font-mono);">
+                                [FILE]
+                            </div>
+                            <div class="resource-info" style="flex-grow: 1;">
+                                <h3 class="resource-title" style="margin-bottom: 0.5rem;">${resource.title}</h3>
+                                <p class="resource-desc" style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">${resource.description || 'No description'}</p>
+                                <div class="resource-meta" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-tertiary); display: flex; gap: 1rem;">
+                                    <span>TYPE: ${resource.category}</span>
+                                    <span>SIZE: ${formatFileSize(resource.file_size)}</span>
+                                    <span>DL: ${resource.download_count}</span>
+                                </div>
+                            </div>
+                            <button class="btn" onclick="downloadResource(${resource.id})">
+                                &darr; PULL
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div style="font-family: var(--font-mono);">[EMPTY_DIR]</div>';
+                }
+            } catch (error) {
+                console.error('Resource Error:', error);
+                container.innerHTML = '<div style="color: #ef4444;">ERR::ACCESS_DENIED</div>';
+            }
+        }
+
+        function downloadResource(id) {
+            window.location.href = `/api/resources/download/${id}`;
+        }
+
+        function formatFileSize(bytes) {
+            if (window.formatFileSize) return window.formatFileSize(bytes);
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+
+</html>

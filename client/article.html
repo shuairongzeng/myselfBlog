@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Reader | Antigravity</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Antigravity::Blog</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Articles</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="resources.html">Resources</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article id="article-container" class="article-container">
+            <div class="loading-state">// Loading...</div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Antigravity Blog</p>
+        </div>
+    </footer>
+
+    <script>
+        // 获取URL参数
+        function getUrlParam(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toISOString().split('T')[0];
+        }
+
+        // 页面加载
+        document.addEventListener('DOMContentLoaded', async function () {
+            const id = getUrlParam('id');
+            const container = document.getElementById('article-container');
+
+            if (!id) {
+                container.innerHTML = '<div class="loading-state">Error: No article ID</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/articles/' + id);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const article = result.data;
+                    let content = article.content || '';
+
+                    if (typeof marked !== 'undefined') {
+                        content = marked.parse(content);
+                    }
+
+                    container.innerHTML = `
+                        <div class="article-header">
+                            <h1 class="article-title">${article.title}</h1>
+                            <div class="article-meta-row">
+                                <span>DATE: ${formatDate(article.created_at)}</span>
+                                ${article.featured ? '<span style="color: var(--accent-purple);">★ FEATURED</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="article-content">${content}</div>
+                        <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-subtle);">
+                            <a href="index.html" class="btn">← Back to Articles</a>
+                        </div>
+                    `;
+                    document.title = article.title + ' | Antigravity';
+                } else {
+                    container.innerHTML = '<div class="loading-state">Error: Article not found</div>';
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="loading-state">Error: ' + err.message + '</div>';
+            }
+        });
+    </script>
+</body>
+
+</html>

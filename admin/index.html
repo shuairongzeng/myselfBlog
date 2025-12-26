@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Antigravity</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <a href="/" class="sidebar-logo">
+                <span class="sidebar-logo-icon">🐉</span>
+                <span>山海异志</span>
+            </a>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a href="#" data-tab="dashboard" class="active">
+                        <span class="nav-item-icon">📊</span>
+                        <span>仪表盘</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" data-tab="articles">
+                        <span class="nav-item-icon">📜</span>
+                        <span>文章管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" data-tab="gallery">
+                        <span class="nav-item-icon">🖼️</span>
+                        <span>图片管理</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" data-tab="resources">
+                        <span class="nav-item-icon">📦</span>
+                        <span>资源管理</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <a href="/">
+                    <span>🔙</span>
+                    <span>返回前台</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 仪表盘 -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="page-header">
+                    <h1 class="page-title">仪表盘</h1>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon gold">📜</div>
+                        <div>
+                            <div class="stat-value" id="stat-articles">0</div>
+                            <div class="stat-label">文章数量</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">⭐</div>
+                        <div>
+                            <div class="stat-value" id="stat-featured">0</div>
+                            <div class="stat-label">推荐文章</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🖼️</div>
+                        <div>
+                            <div class="stat-value" id="stat-images">0</div>
+                            <div class="stat-label">图片数量</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">📦</div>
+                        <div>
+                            <div class="stat-value" id="stat-resources">0</div>
+                            <div class="stat-label">资源文件</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🐉</div>
+                    <p style="font-family: var(--font-display); font-size: 1.2rem;">欢迎使用山海异志后台管理系统</p>
+                </div>
+            </section>
+
+            <!-- 文章管理 -->
+            <section id="tab-articles" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">文章管理</h1>
+                    <button class="btn btn-primary" onclick="openArticleModal()">
+                        <span>➕</span>
+                        <span>新建文章</span>
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>封面</th>
+                            <th>标题</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="articles-table-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 图片管理 -->
+            <section id="tab-gallery" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">图片管理</h1>
+                    <button class="btn btn-primary" onclick="openGalleryModal()">
+                        <span>➕</span>
+                        <span>上传图片</span>
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>预览</th>
+                            <th>标题</th>
+                            <th>分组</th>
+                            <th>上传时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gallery-table-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 资源管理 -->
+            <section id="tab-resources" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title">资源管理</h1>
+                    <button class="btn btn-primary" onclick="openResourceModal()">
+                        <span>➕</span>
+                        <span>上传资源</span>
+                    </button>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>分类</th>
+                            <th>大小</th>
+                            <th>下载次数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resources-table-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="loading">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- 文章模态框 -->
+    <div class="modal-overlay" id="article-modal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="article-modal-title">新建文章</h2>
+                <button class="modal-close" onclick="closeModal('article-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="article-form">
+                    <input type="hidden" id="article-id">
+
+                    <div class="form-group">
+                        <label class="form-label">文章标题 *</label>
+                        <input type="text" class="form-input" id="article-title" required placeholder="输入文章标题">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">文章内容（支持Markdown）</label>
+                        <textarea class="form-textarea" id="article-content"
+                            placeholder="输入文章内容，支持Markdown语法..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">封面图片</label>
+                        <div class="file-upload" onclick="document.getElementById('article-cover').click()">
+                            <div class="file-upload-icon">📷</div>
+                            <div class="file-upload-text">点击上传封面图片</div>
+                            <input type="file" id="article-cover" accept="image/*"
+                                onchange="previewImage(this, 'cover-preview')">
+                        </div>
+                        <img id="cover-preview" class="file-preview" style="display: none;">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-checkbox">
+                            <input type="checkbox" id="article-featured">
+                            <span>设为推荐文章</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('article-modal')">取消</button>
+                <button class="btn btn-primary" onclick="saveArticle()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片模态框 -->
+    <div class="modal-overlay" id="gallery-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">上传图片</h2>
+                <button class="modal-close" onclick="closeModal('gallery-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="gallery-form">
+                    <div class="form-group">
+                        <label class="form-label">图片标题</label>
+                        <input type="text" class="form-input" id="gallery-title" placeholder="可选，留空使用文件名">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">分组名称</label>
+                        <input type="text" class="form-input" id="gallery-group" placeholder="默认">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">选择图片（可多选）*</label>
+                        <div class="file-upload" onclick="document.getElementById('gallery-files').click()">
+                            <div class="file-upload-icon">🖼️</div>
+                            <div class="file-upload-text" id="gallery-files-text">点击上传图片（支持多选）</div>
+                            <input type="file" id="gallery-files" accept="image/*" multiple
+                                onchange="updateFileText(this)">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('gallery-modal')">取消</button>
+                <button class="btn btn-primary" onclick="uploadImages()">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 资源模态框 -->
+    <div class="modal-overlay" id="resource-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">上传资源</h2>
+                <button class="modal-close" onclick="closeModal('resource-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resource-form">
+                    <div class="form-group">
+                        <label class="form-label">资源名称 *</label>
+                        <input type="text" class="form-input" id="resource-title" required placeholder="输入资源名称">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">资源描述</label>
+                        <textarea class="form-textarea" id="resource-description" style="min-height: 100px;"
+                            placeholder="输入资源描述..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">资源分类</label>
+                        <input type="text" class="form-input" id="resource-category" placeholder="其他">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">选择文件 *</label>
+                        <div class="file-upload" onclick="document.getElementById('resource-file').click()">
+                            <div class="file-upload-icon">📦</div>
+                            <div class="file-upload-text" id="resource-file-text">点击上传文件</div>
+                            <input type="file" id="resource-file" onchange="updateResourceFileText(this)">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('resource-modal')">取消</button>
+                <button class="btn btn-primary" onclick="uploadResource()">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+
+</html>
